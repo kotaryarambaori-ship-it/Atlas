@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Atlas — Social Platform</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #080b12;
+      --panel: #111722;
+      --border: #263142;
+      --text: #f4f7fb;
+      --muted: #94a3b8;
+      --accent: #8b5cf6;
+      --blue: #38bdf8;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+    }
+
+    button, input, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .auth {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background:
+        radial-gradient(circle at top, #292054 0, transparent 40%),
+        var(--bg);
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 400px;
+      padding: 30px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 13px;
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #090e17;
+      color: white;
+      outline: none;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .btn {
+      border: 0;
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: white;
+      background: var(--accent);
+      font-weight: 700;
+    }
+
+    .btn.secondary {
+      background: #202a3a;
+    }
+
+    .btn.full {
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    .switch {
+      margin-top: 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .switch button {
+      background: none;
+      border: 0;
+      color: var(--blue);
+    }
+
+    .error {
+      color: #fb7185;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #0b1019ee;
+      border-bottom: 1px solid var(--border);
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar .logo {
+      font-size: 25px;
+      margin: 0;
+    }
+
+    .layout {
+      max-width: 1100px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 210px minmax(0, 1fr) 260px;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .panel, .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 16px;
+      margin-bottom: 15px;
+    }
+
+    .nav button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      color: var(--text);
+      border: 0;
+      padding: 13px 10px;
+      border-radius: 9px;
+      margin-bottom: 5px;
+    }
+
+    .nav button:hover {
+      background: #202a3a;
+    }
+
+    h2, h3, p {
+      overflow-wrap: anywhere;
+    }
+
+    h2 {
+      font-size: 21px;
+      margin-top: 0;
+    }
+
+    .composer textarea {
+      resize: vertical;
+      min-height: 95px;
+    }
+
+    .composer-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .post-author {
+      font-weight: 800;
+    }
+
+    .post-date {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .post-text {
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .post-actions button {
+      background: #202a3a;
+      border: 0;
+      border-radius: 8px;
+      color: white;
+      padding: 9px 12px;
+    }
+
+    .repost-label {
+      color: var(--blue);
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .original-post {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+
+    .user-row {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .user-row:last-child {
+      border-bottom: 0;
+    }
+
+    .user-row button {
+      margin-top: 8px;
+    }
+
+    .chat-box {
+      height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+
+    .bubble {
+      max-width: 85%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      background: #202a3a;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .bubble.mine {
+      margin-left: auto;
+      background: #5537a5;
+    }
+
+    .bubble small {
+      display: block;
+      font-size: 10px;
+      margin-top: 6px;
+      opacity: .7;
+    }
+
+    .chat-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-form input {
+      margin: 0;
+      min-width: 0;
+    }
+
+    .profile-bio {
+      white-space: pre-wrap;
+      color: var(--muted);
+    }
+
+    @media (max-width: 850px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .left-column, .right-column {
+        display: none;
+      }
+
+      .topbar {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN -->
+  <section id="authScreen" class="auth">
+    <div class="auth-card">
+      <div class="logo">ATLAS<span>.</span></div>
+      <p class="muted">Your world. Your conversations.</p>
+
+      <form id="loginForm">
+        <h2>Welcome back</h2>
+
+        <input
+          id="loginUsername"
+          placeholder="Username"
+          autocomplete="username"
+          required
+        >
+
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="Password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button class="btn full" type="submit">Login</button>
+      </form>
+
+      <form id="registerForm" class="hidden">
+        <h2>Create your account</h2>
+
+        <input
+          id="registerName"
+          placeholder="Display name"
+          minlength="2"
+          maxlength="40"
+          required
+        >
+
+        <input
+          id="registerUsername"
+          placeholder="Username (letters, numbers, _)"
+          minlength="3"
+          maxlength="20"
+          pattern="[A-Za-z0-9_]+"
+          autocomplete="username"
+          required
+        >
+
+        <input
+          id="registerPassword"
+          type="password"
+          placeholder="Password (at least 8 characters)"
+          minlength="8"
+          maxlength="72"
+          autocomplete="new-password"
+          required
+        >
+
+        <button class="btn full" type="submit">Create Account</button>
+      </form>
+
+      <div id="authError" class="error"></div>
+
+      <div class="switch">
+        <span id="switchText">New to Atlas?</span>
+        <button id="switchAuth" type="button">Create account</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN APPLICATION -->
+  <section id="appScreen" class="hidden">
+
+    <header class="topbar">
+      <div class="logo">ATLAS<span>.</span></div>
+
+      <div>
+        <span id="headerUsername"></span>
+        <button id="logoutBtn" class="btn secondary">Logout</button>
+      </div>
+    </header>
+
+    <div class="layout">
+
+      <aside class="left-column">
+        <div class="panel nav">
+          <button data-view="feed">🏠 Home Feed</button>
+          <button data-view="profile">👤 My Profile</button>
+          <button data-view="people">👥 People</button>
+          <button data-view="messages">💬 Messages</button>
+        </div>
+
+        <div class="panel">
+          <div class="logo">ATLAS<span>.</span></div>
+          <p class="muted">Connect with your world.</p>
+        </div>
+      </aside>
+
+      <main>
+
+        <!-- FEED -->
+        <section id="feedView">
+          <div class="card composer">
+            <h2>What's happening?</h2>
+
+            <form id="postForm">
+              <textarea
+                id="postText"
+                maxlength="1000"
+                placeholder="Share your thoughts..."
+                required
+              ></textarea>
+
+              <div class="composer-footer">
+                <span id="postCount" class="muted">0/1000</span>
+                <button class="btn" type="submit">Publish Post</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="feed"></div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="profileView" class="hidden">
+          <div class="card">
+            <h2>My Profile</h2>
+
+            <form id="profileForm">
+              <label
