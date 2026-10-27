@@ -30,7 +30,20 @@ async function initDb() {
       created_at TIMESTAMP DEFAULT NOW()
     )
   `);
-  console.log('Database connected');
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS messages (
+      id SERIAL PRIMARY KEY,
+      sender_id INTEGER NOT NULL REFERENCES users(id),
+      receiver_id INTEGER NOT NULL REFERENCES users(id),
+      content TEXT NOT NULL,
+      is_read BOOLEAN DEFAULT false,
+      created_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+  await pool.query(
+    'CREATE INDEX IF NOT EXISTS idx_messages_pair ON messages (sender_id, receiver_id)'
+  );
+  console.log('Database ready');
 }
 initDb().catch(err => console.error('DB error:', err.message));
 
@@ -45,14 +58,12 @@ app.use(session({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/db-test', async (req, res) => {
-  try {
-    const r = await pool.query('SELECT NOW()');
-    res.send('Database connected: ' + r.rows[0].now);
-  } catch (e) {
-    res.status(500).send('DB error: ' + e.message);
+function requireLogin(req, res, next) {
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Login required' });
   }
-});
+  next();
+}
 
 app.post('/api/signup', async (req, res) => {
   try {
@@ -111,11 +122,8 @@ app.get('/api/posts', async (req, res) => {
   }
 });
 
-app.post('/api/posts', async (req, res) => {
+app.post('/api/posts', requireLogin, async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({ error: 'Login required' });
-    }
     const content = (req.body.content || '').trim();
     if (!content) {
       return res.status(400).json({ error: 'Content required' });
@@ -125,6 +133,82 @@ app.post('/api/posts', async (req, res) => {
       [req.session.user.id, req.session.user.username, content]
     );
     res.json({ post: r.rows[0] });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ---------- CHAT ----------
+
+app.get('/api/users', requireLogin, async (req, res) => {
+  try {
+    const me = req.session.user.id;
+    const r = await pool.query(
+      `SELECT u.id, u.username,
+        (SELECT COUNT(*) FROM messages m
+          WHERE m.sender_id = u.id AND m.receiver_id = $1 AND m.is_read = false)::int AS unread
+       FROM users u
+       WHERE u.id <> $1
+       ORDER BY u.username ASC`,
+      [me]
+    );
+    res.json({ users: r.rows });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/messages/:userId', requireLogin, async (req, res) => {
+  try {
+    const me = req.session.user.id;
+    const other = parseInt(req.params.userId, 10);
+    if (!other) {
+      return res.status(400).json({ error: 'Invalid user' });
+    }
+    await pool.query(
+      'UPDATE messages SET is_read = true WHERE sender_id = $1 AND receiver_id = $2 AND is_read = false',
+      [other, me]
+    );
+    const r = await pool.query(
+      `SELECT id, sender_id, receiver_id, content, created_at FROM (
+         SELECT * FROM messages
+         WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)
+         ORDER BY id DESC LIMIT 200
+       ) t ORDER BY id ASC`,
+      [me, other]
+    );
+    res.json({ messages: r.rows });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post('/api/messages', requireLogin, async (req, res) => {
+  try {
+    const me = req.session.user.id;
+    const receiver = parseInt(req.body.receiver_id, 10);
+    const content = (req.body.content || '').trim();
+    if (!receiver) {
+      return res.status(400).json({ error: 'Receiver required' });
+    }
+    if (receiver === me) {
+      return res.status(400).json({ error: 'You cannot message yourself' });
+    }
+    if (!content) {
+      return res.status(400).json({ error: 'Message is empty' });
+    }
+    if (content.length > 1000) {
+      return res.status(400).json({ error: 'Message too long (max 1000)' });
+    }
+    const exists = await pool.query('SELECT id FROM users WHERE id = $1', [receiver]);
+    if (exists.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const r = await pool.query(
+      'INSERT INTO messages (sender_id, receiver_id, content) VALUES ($1, $2, $3) RETURNING id, sender_id, receiver_id, content, created_at',
+      [me, receiver, content]
+    );
+    res.json({ message: r.rows[0] });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
