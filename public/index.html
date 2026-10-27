@@ -13,7 +13,7 @@
 body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
 .hide{display:none!important}
 .bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(600px 300px at 10% 0,rgba(0,184,255,.18),transparent),radial-gradient(600px 300px at 90% 10%,rgba(255,79,163,.16),transparent),radial-gradient(500px 300px at 50% 100%,rgba(109,74,255,.16),transparent)}
-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:980px;margin:0 auto}
+nav{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:680px;margin:0 auto}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .logo svg{width:38px;height:38px}
 .word{font-size:26px;font-weight:800;letter-spacing:1px;background:linear-gradient(90deg,var(--p2),var(--p),var(--p3));-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -22,9 +22,11 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 1
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.6;cursor:wait}
 .btn.ghost{background:var(--card);color:var(--text);border:1px solid var(--line)}
+.btn.sm{padding:7px 14px;font-size:13px}
 .btn.block{width:100%}
-.wrap{max-width:440px;margin:18px auto;padding:0 16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:var(--shadow);animation:up .4s ease}
+.wrap{max-width:440px;margin:14px auto;padding:0 16px}
+.wrap.wide{max-width:680px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow);animation:up .4s ease}
 @keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .hero{text-align:center;margin:10px 0 18px}
 .hero h1{margin:8px 0 4px;font-size:26px}
@@ -34,8 +36,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 1
 .tabs button.on{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.1)}
 label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px}
 label small{font-weight:400;color:var(--muted)}
-input{width:100%;padding:13px 14px;font-size:16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-family:inherit;outline:none}
-input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(109,74,255,.18)}
+input,textarea{width:100%;padding:13px 14px;font-size:16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-family:inherit;outline:none}
+textarea{resize:vertical;min-height:80px}
+input:focus,textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(109,74,255,.18)}
 .pw{position:relative}
 .pw button{position:absolute;right:6px;top:6px;border:0;background:none;color:var(--muted);padding:8px;cursor:pointer;font-size:13px;font-weight:600}
 .hint{font-size:12px;margin-top:4px;min-height:16px;color:var(--muted)}
@@ -50,11 +53,38 @@ input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(109,74,255,.18)}
 @keyframes s{to{transform:rotate(360deg)}}
 .load{display:flex;justify-content:center;padding:60px}
 .load i{width:34px;height:34px;border:4px solid var(--line);border-top-color:var(--p);border-radius:50%;animation:s .8s linear infinite}
-.avatar{width:72px;height:72px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--p2),var(--p),var(--p3))}
-.row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;gap:10px}
-.row span:first-child{color:var(--muted)}
-.row span:last-child{text-align:right;word-break:break-all}
-.soon{margin-top:16px;padding:12px;border-radius:12px;background:var(--bg);color:var(--muted);font-size:13px;line-height:1.5}
+.avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--p2),var(--p),var(--p3))}
+/* app */
+.mtabs{display:flex;gap:6px;margin-bottom:14px}
+.mtabs button{flex:1;border:1px solid var(--line);background:var(--card);color:var(--muted);padding:11px;border-radius:14px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
+.mtabs button.on{background:linear-gradient(90deg,var(--p2),var(--p),var(--p3));color:#fff;border-color:transparent}
+.stack>*+*{margin-top:12px}
+.post{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow);word-wrap:break-word}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+.ua{font-weight:700;cursor:pointer;color:var(--text)}
+.ua small,.ph>small{color:var(--muted);font-weight:400;font-size:12px}
+.pc{white-space:pre-wrap;line-height:1.5;margin:4px 0 10px}
+.pa{display:flex;gap:6px;flex-wrap:wrap}
+.pa button{border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:12px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.pa button.liked{color:var(--p3);border-color:var(--p3)}
+.cmt{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+.c1{padding:8px 0;font-size:14px;border-bottom:1px solid var(--line)}
+.c1 b{cursor:pointer}
+.c1 small{color:var(--muted);margin-left:6px}
+.c1 .cd{float:right;border:0;background:none;color:var(--err);cursor:pointer;font-size:12px}
+.crow{display:flex;gap:8px;margin-top:10px}
+.crow input{flex:1}
+.more{display:block;margin:12px auto}
+.empty{text-align:center;color:var(--muted);padding:24px}
+.stats{display:flex;justify-content:space-around;margin:14px 0;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stats div{text-align:center}.stats b{display:block;font-size:18px}.stats span{font-size:12px;color:var(--muted)}
+.bio{color:var(--text);margin:8px 0;white-space:pre-wrap}
+.meta{color:var(--muted);font-size:13px;margin:3px 0}
+.meta a{color:var(--p)}
+.urow{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;cursor:pointer}
+.urow .avatar{width:42px;height:42px;font-size:18px;margin:0}
+.urow small{display:block;color:var(--muted)}
+h3.sec{margin:18px 0 8px;font-size:15px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -66,12 +96,12 @@ input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(109,74,255,.18)}
     <span class="word">RINKU</span>
   </a>
   <div class="navr">
-    <button class="btn ghost" id="theme" aria-label="Toggle theme">Dark</button>
-    <button class="btn ghost hide" id="logout">Logout</button>
+    <button class="btn ghost sm" id="theme" aria-label="Toggle theme">Dark</button>
+    <button class="btn ghost sm hide" id="logout">Logout</button>
   </div>
 </nav>
 
-<div class="wrap">
+<div class="wrap" id="wrap">
   <div id="loading" class="load"><i></i></div>
 
   <!-- AUTH -->
@@ -82,7 +112,6 @@ input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(109,74,255,.18)}
         <button id="tLogin" class="on">Login</button>
         <button id="tReg">Register</button>
       </div>
-
       <form id="fLogin" novalidate>
         <label for="lid">Email or username</label>
         <input id="lid" autocomplete="username" autocapitalize="none">
@@ -92,7 +121,6 @@ input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(109,74,255,.18)}
         <div class="sub"><button class="btn block" id="lgo" type="submit">Login</button></div>
         <div class="sub center"><button type="button" class="link" id="forgot">Forgot password?</button></div>
       </form>
-
       <form id="fReg" class="hide" novalidate>
         <label for="rname">Full name</label>
         <input id="rname" autocomplete="name" maxlength="80">
@@ -115,30 +143,48 @@ input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(109,74,255,.18)}
     </div>
   </div>
 
-  <!-- HOME -->
-  <div id="home" class="hide">
-    <div class="card center">
-      <div class="avatar" id="av"></div>
-      <h2 id="hname" style="margin:4px 0"></h2>
-      <div style="color:var(--muted)" id="huser"></div>
-      <div style="margin-top:16px;text-align:left">
-        <div class="row"><span>Email</span><span id="hmail"></span></div>
-        <div class="row"><span>Role</span><span id="hrole"></span></div>
-        <div class="row"><span>Joined</span><span id="hjoin"></span></div>
+  <!-- APP -->
+  <div id="app" class="hide">
+    <div class="mtabs">
+      <button id="mHome" class="on">Home</button>
+      <button id="mSearch">Search</button>
+      <button id="mProfile">Profile</button>
+    </div>
+
+    <div id="vHome" class="stack">
+      <div class="card">
+        <textarea id="newpost" maxlength="1000" placeholder="What's on your mind?"></textarea>
+        <div id="pmsg" class="msg"></div>
+        <div class="sub"><button class="btn block" id="pgo">Post</button></div>
       </div>
-      <div class="soon">You are logged in securely. Profile, posts, follow, search, chat and notifications are coming in the next phases.</div>
+      <div id="feed" class="stack plist"></div>
+    </div>
+
+    <div id="vSearch" class="stack hide">
+      <input id="q" placeholder="Search people or posts..." autocomplete="off">
+      <div id="sres" class="stack"></div>
+    </div>
+
+    <div id="vProfile" class="stack hide">
+      <div id="pbox"></div>
+      <div id="uposts" class="stack plist"></div>
     </div>
   </div>
 </div>
 
 <script>
 function $(id){return document.getElementById(id)}
-function api(url,body){
-  var o=body!==undefined?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{};
-  return fetch(url,o).then(function(r){return r.json().catch(function(){return {}}).then(function(j){return {ok:r.ok,data:j}})});
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function api(url,body,method){
+  var o={};
+  if(body!==undefined){o={method:method||'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}}
+  else if(method){o={method:method}}
+  return fetch(url,o).then(function(r){return r.json().catch(function(){return {}}).then(function(j){return {ok:r.ok,status:r.status,data:j}})});
 }
 function busy(btn,on,label){btn.disabled=on;btn.innerHTML=on?'<span class="spin"></span>Please wait':label}
 function msg(id,type,text){var e=$(id);e.className='msg '+(type||'');e.textContent=text||''}
+function when(t){return new Date(t).toLocaleString([],{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
+var me=null;
 
 /* theme */
 function setTheme(t){
@@ -152,38 +198,37 @@ $('theme').onclick=function(){setTheme(document.documentElement.getAttribute('da
 
 /* views */
 function view(v){
-  ['loading','auth','home'].forEach(function(id){$(id).classList.toggle('hide',id!==v)});
-  $('logout').classList.toggle('hide',v!=='home');
+  ['loading','auth','app'].forEach(function(id){$(id).classList.toggle('hide',id!==v)});
+  $('logout').classList.toggle('hide',v!=='app');
+  $('wrap').className='wrap'+(v==='app'?' wide':'');
 }
-function showHome(u){
-  var name=u.full_name||u.username;
-  $('av').textContent=name.charAt(0).toUpperCase();
-  $('hname').textContent=name;
-  $('huser').textContent='@'+u.username;
-  $('hmail').textContent=u.email||'Not added';
-  $('hrole').textContent=u.role||'user';
-  $('hjoin').textContent=u.created_at?new Date(u.created_at).toLocaleDateString():'';
-  view('home');
+function section(s,arg){
+  ['Home','Search','Profile'].forEach(function(n){
+    $('v'+n).classList.toggle('hide',n!==s);
+    $('m'+n).classList.toggle('on',n===s);
+  });
+  if(s==='Home')fillList($('feed'),true,null);
+  if(s==='Search')$('q').focus();
+  if(s==='Profile')loadProfile(arg||me.username);
+  window.scrollTo(0,0);
 }
+$('mHome').onclick=function(){section('Home')};
+$('mSearch').onclick=function(){section('Search')};
+$('mProfile').onclick=function(){section('Profile')};
 
-/* tabs */
+/* auth */
 function tab(reg){
   $('tLogin').classList.toggle('on',!reg);$('tReg').classList.toggle('on',reg);
   $('fLogin').classList.toggle('hide',reg);$('fReg').classList.toggle('hide',!reg);
 }
 $('tLogin').onclick=function(){tab(false)};
 $('tReg').onclick=function(){tab(true)};
-
-/* show/hide password */
 document.querySelectorAll('[data-eye]').forEach(function(b){
   b.onclick=function(){
-    var i=$(b.getAttribute('data-eye'));
-    var show=i.type==='password';
+    var i=$(b.getAttribute('data-eye')),show=i.type==='password';
     i.type=show?'text':'password';b.textContent=show?'Hide':'Show';
   };
 });
-
-/* username availability */
 var ut=null;
 $('ruser').oninput=function(){
   var v=this.value.trim(),h=$('uhint');
@@ -199,8 +244,7 @@ $('ruser').oninput=function(){
     });
   },400);
 };
-
-/* login */
+function enter(u){me=u;view('app');section('Home')}
 $('fLogin').onsubmit=function(e){
   e.preventDefault();
   var id=$('lid').value.trim(),pw=$('lpw').value;
@@ -208,43 +252,94 @@ $('fLogin').onsubmit=function(e){
   msg('lmsg');busy($('lgo'),true);
   api('/api/login',{identifier:id,password:pw}).then(function(r){
     busy($('lgo'),false,'Login');
-    if(r.ok){$('lpw').value='';showHome(r.data.user)}
+    if(r.ok){$('lpw').value='';enter(r.data.user)}
     else msg('lmsg','err',r.data.error||'Login failed');
   }).catch(function(){busy($('lgo'),false,'Login');msg('lmsg','err','Network error, try again')});
 };
-
-/* register */
 $('fReg').onsubmit=function(e){
   e.preventDefault();
-  var b={
-    full_name:$('rname').value.trim(),username:$('ruser').value.trim(),
-    email:$('rmail').value.trim(),phone:$('rphone').value.trim(),dob:$('rdob').value,
-    password:$('rpw').value,confirm:$('rcf').value
-  };
+  var b={full_name:$('rname').value.trim(),username:$('ruser').value.trim(),email:$('rmail').value.trim(),phone:$('rphone').value.trim(),dob:$('rdob').value,password:$('rpw').value,confirm:$('rcf').value};
   if(b.password.length<8){msg('rmsg','err','Password must be at least 8 characters');return}
   if(b.password!==b.confirm){msg('rmsg','err','Passwords do not match');return}
   msg('rmsg');busy($('rgo'),true);
   api('/api/signup',b).then(function(r){
     busy($('rgo'),false,'Create account');
-    if(r.ok){$('rpw').value='';$('rcf').value='';showHome(r.data.user)}
+    if(r.ok){$('rpw').value='';$('rcf').value='';enter(r.data.user)}
     else msg('rmsg','err',r.data.error||'Could not register');
   }).catch(function(){busy($('rgo'),false,'Create account');msg('rmsg','err','Network error, try again')});
 };
+$('forgot').onclick=function(){api('/api/forgot',{}).then(function(r){msg('lmsg','err',r.data.error||'Not available')})};
+$('logout').onclick=function(){api('/api/logout',{}).then(function(){me=null;view('auth');tab(false)})};
 
-/* forgot */
-$('forgot').onclick=function(){
-  api('/api/forgot',{}).then(function(r){msg('lmsg','err',r.data.error||'Not available')});
+/* posts */
+var isAdmin=false;
+function postHtml(p){
+  var mine=p.user_id===me.id;
+  var name=p.full_name||p.username;
+  return '<div class="post" data-id="'+p.id+'"><div class="ph"><span class="ua" data-u="'+esc(p.username)+'">'+esc(name)+' <small>@'+esc(p.username)+'</small></span><small>'+when(p.created_at)+'</small></div>'+
+    '<div class="pc">'+esc(p.content)+'</div>'+
+    '<div class="pa"><button data-act="like" class="'+(p.liked?'liked':'')+'">&#9829; <span>'+p.likes+'</span></button>'+
+    '<button data-act="cm">Comments <span>'+p.comments+'</span></button>'+
+    (mine?'<button data-act="edit">Edit</button>':'')+
+    ((mine||isAdmin)?'<button data-act="del">Delete</button>':'')+
+    '</div><div class="cmt hide"></div></div>';
+}
+function showPosts(el,posts,append){
+  var old=el.querySelector('.more');if(old)old.remove();
+  if(!append)el.innerHTML='';
+  if(!posts.length&&!append){el.innerHTML='<div class="empty">No posts yet.</div>';return}
+  el.insertAdjacentHTML('beforeend',posts.map(postHtml).join(''));
+  if(posts.length===20){
+    el.insertAdjacentHTML('beforeend','<button class="btn ghost more">Load more</button>');
+  }
+  if(posts.length)el.setAttribute('data-last',posts[posts.length-1].id);
+}
+function fillList(el,reset,user){
+  if(reset){el.innerHTML='<div class="load"><i></i></div>';el.setAttribute('data-last','')}
+  var last=el.getAttribute('data-last');
+  var url='/api/posts?'+(last&&!reset?'before='+last+'&':'')+(user?'user='+encodeURIComponent(user):'');
+  if(el.id==='uposts'||el.id==='feed')el.setAttribute('data-user',user||'');
+  api(url).then(function(r){
+    if(!r.ok){el.innerHTML='<div class="empty">Could not load posts</div>';return}
+    isAdmin=!!r.data.admin;
+    showPosts(el,r.data.posts||[],!reset);
+  }).catch(function(){el.innerHTML='<div class="empty">Network error</div>'});
+}
+$('pgo').onclick=function(){
+  var c=$('newpost').value.trim();
+  if(!c){msg('pmsg','err','Write something first');return}
+  msg('pmsg');busy($('pgo'),true);
+  api('/api/posts',{content:c}).then(function(r){
+    busy($('pgo'),false,'Post');
+    if(r.ok){$('newpost').value='';msg('pmsg','ok','Posted');setTimeout(function(){msg('pmsg')},1500);fillList($('feed'),true,null)}
+    else msg('pmsg','err',r.data.error||'Could not post');
+  }).catch(function(){busy($('pgo'),false,'Post');msg('pmsg','err','Network error')});
 };
 
-/* logout */
-$('logout').onclick=function(){
-  api('/api/logout',{}).then(function(){view('auth');tab(false)});
-};
+/* comments */
+function loadComments(box,id){
+  api('/api/posts/'+id+'/comments').then(function(r){
+    if(!r.ok){box.innerHTML='<div class="empty">Could not load</div>';return}
+    var h=r.data.comments.map(function(c){
+      return '<div class="c1" data-cid="'+c.id+'"><b data-u="'+esc(c.username)+'">'+esc(c.full_name||c.username)+'</b><small>'+when(c.created_at)+'</small>'+
+        (c.user_id===r.data.me?'<button class="cd" data-act="cdel">Delete</button>':'')+
+        '<div>'+esc(c.content)+'</div></div>';
+    }).join('')||'<div class="empty" style="padding:8px">No comments yet</div>';
+    box.innerHTML=h+'<div class="crow"><input class="cin" maxlength="500" placeholder="Write a comment..."><button class="btn sm" data-act="csend">Send</button></div><div class="msg cmsg"></div>';
+  });
+}
 
-/* start */
-api('/api/me').then(function(r){
-  if(r.data&&r.data.user)showHome(r.data.user);else view('auth');
-}).catch(function(){view('auth')});
-</script>
-</body>
-  </html>
+/* clicks inside lists */
+document.addEventListener('click',function(e){
+  var t=e.target;
+  var u=t.closest('[data-u]');
+  if(u&&!t.closest('[data-act]')){section('Profile',u.getAttribute('data-u'));return}
+  var more=t.closest('.more');
+  if(more){var list=more.parentNode;fillList(list,false,list.getAttribute('data-user')||null);return}
+  var b=t.closest('[data-act]');if(!b)return;
+  var act=b.getAttribute('data-act');
+  var post=b.closest('.post');
+  var id=post?post.getAttribute('data-id'):null;
+  if(act==='like'){
+    api('/api/posts/'+id+'/like',{}).then(function(r){
+      if(r.ok){b.classList.toggle('liked',r.da
