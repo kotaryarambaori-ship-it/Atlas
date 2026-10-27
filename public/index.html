@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RINKU - Connect, share, chat</title>
+<meta name="description" content="RINKU is a social network to connect, share and chat.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2300c6ff'/%3E%3Cstop offset='.5' stop-color='%237b4dff'/%3E%3Cstop offset='1' stop-color='%23ff4fa3'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'%3ER%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg:#f4f6fc;--card:#fff;--text:#1b1f3a;--muted:#6b7194;--line:#e3e6f3;--p:#6d4aff;--p2:#00b8ff;--p3:#ff4fa3;--err:#e5365a;--ok:#16a870;--shadow:0 10px 30px rgba(80,70,180,.12)}
+[data-theme=dark]{--bg:#0d0f1f;--card:#171a31;--text:#eef0ff;--muted:#9aa0c7;--line:#2a2e4d;--shadow:0 10px 30px rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+.hide{display:none!important}
+.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(600px 300px at 10% 0,rgba(0,184,255,.18),transparent),radial-gradient(600px 300px at 90% 10%,rgba(255,79,163,.16),transparent),radial-gradient(500px 300px at 50% 100%,rgba(109,74,255,.16),transparent)}
+nav{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:980px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo svg{width:38px;height:38px}
+.word{font-size:26px;font-weight:800;letter-spacing:1px;background:linear-gradient(90deg,var(--p2),var(--p),var(--p3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.navr{display:flex;gap:8px;align-items:center}
+.btn{border:0;border-radius:12px;padding:11px 18px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;color:#fff;background:linear-gradient(90deg,var(--p2),var(--p),var(--p3));transition:transform .15s,opacity .2s}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.ghost{background:var(--card);color:var(--text);border:1px solid var(--line)}
+.btn.block{width:100%}
+.wrap{max-width:440px;margin:18px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:var(--shadow);animation:up .4s ease}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hero{text-align:center;margin:10px 0 18px}
+.hero h1{margin:8px 0 4px;font-size:26px}
+.hero p{margin:0;color:var(--muted)}
+.tabs{display:flex;background:var(--bg);border-radius:14px;padding:4px;margin-bottom:18px}
+.tabs button{flex:1;border:0;background:none;padding:10px;border-radius:11px;font-weight:600;font-size:15px;color:var(--muted);cursor:pointer;font-family:inherit}
+.tabs button.on{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px}
+label small{font-weight:400;color:var(--muted)}
+input{width:100%;padding:13px 14px;font-size:16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-family:inherit;outline:none}
+input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(109,74,255,.18)}
+.pw{position:relative}
+.pw button{position:absolute;right:6px;top:6px;border:0;background:none;color:var(--muted);padding:8px;cursor:pointer;font-size:13px;font-weight:600}
+.hint{font-size:12px;margin-top:4px;min-height:16px;color:var(--muted)}
+.hint.ok{color:var(--ok)}.hint.bad{color:var(--err)}
+.msg{border-radius:12px;padding:11px 13px;font-size:14px;margin:14px 0 0;display:none}
+.msg.err{display:block;background:rgba(229,54,90,.12);color:var(--err)}
+.msg.ok{display:block;background:rgba(22,168,112,.12);color:var(--ok)}
+.sub{margin-top:16px}
+.link{background:none;border:0;color:var(--p);font-weight:600;cursor:pointer;font-size:14px;padding:0;font-family:inherit}
+.center{text-align:center}
+.spin{display:inline-block;width:16px;height:16px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:s .7s linear infinite;vertical-align:-3px;margin-right:6px}
+@keyframes s{to{transform:rotate(360deg)}}
+.load{display:flex;justify-content:center;padding:60px}
+.load i{width:34px;height:34px;border:4px solid var(--line);border-top-color:var(--p);border-radius:50%;animation:s .8s linear infinite}
+.avatar{width:72px;height:72px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--p2),var(--p),var(--p3))}
+.row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;gap:10px}
+.row span:first-child{color:var(--muted)}
+.row span:last-child{text-align:right;word-break:break-all}
+.soon{margin-top:16px;padding:12px;border-radius:12px;background:var(--bg);color:var(--muted);font-size:13px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<nav>
+  <a class="logo" href="/" aria-label="RINKU home">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00c6ff"/><stop offset=".5" stop-color="#7b4dff"/><stop offset="1" stop-color="#ff4fa3"/></linearGradient></defs><rect width="40" height="40" rx="12" fill="url(#lg)"/><path d="M13 29V11h8.5a5.5 5.5 0 0 1 1.6 10.8L27 29h-4.2l-3.5-6.6H17V29z M17 19h4.3a2 2 0 0 0 0-4H17z" fill="#fff" fill-rule="evenodd"/></svg>
+    <span class="word">RINKU</span>
+  </a>
+  <div class="navr">
+    <button class="btn ghost" id="theme" aria-label="Toggle theme">Dark</button>
+    <button class="btn ghost hide" id="logout">Logout</button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="loading" class="load"><i></i></div>
+
+  <!-- AUTH -->
+  <div id="auth" class="hide">
+    <div class="hero"><h1>Welcome to RINKU</h1><p>Connect, share and chat with people.</p></div>
+    <div class="card">
+      <div class="tabs">
+        <button id="tLogin" class="on">Login</button>
+        <button id="tReg">Register</button>
+      </div>
+
+      <form id="fLogin" novalidate>
+        <label for="lid">Email or username</label>
+        <input id="lid" autocomplete="username" autocapitalize="none">
+        <label for="lpw">Password</label>
+        <div class="pw"><input id="lpw" type="password" autocomplete="current-password"><button type="button" data-eye="lpw">Show</button></div>
+        <div id="lmsg" class="msg"></div>
+        <div class="sub"><button class="btn block" id="lgo" type="submit">Login</button></div>
+        <div class="sub center"><button type="button" class="link" id="forgot">Forgot password?</button></div>
+      </form>
+
+      <form id="fReg" class="hide" novalidate>
+        <label for="rname">Full name</label>
+        <input id="rname" autocomplete="name" maxlength="80">
+        <label for="ruser">Username</label>
+        <input id="ruser" autocomplete="username" autocapitalize="none" maxlength="30">
+        <div class="hint" id="uhint">3-30 letters, numbers or underscore</div>
+        <label for="rmail">Email</label>
+        <input id="rmail" type="email" autocomplete="email" autocapitalize="none">
+        <label for="rphone">Phone <small>(optional)</small></label>
+        <input id="rphone" type="tel" autocomplete="tel">
+        <label for="rdob">Date of birth <small>(optional)</small></label>
+        <input id="rdob" type="date">
+        <label for="rpw">Password <small>(min 8 characters)</small></label>
+        <div class="pw"><input id="rpw" type="password" autocomplete="new-password"><button type="button" data-eye="rpw">Show</button></div>
+        <label for="rcf">Confirm password</label>
+        <div class="pw"><input id="rcf" type="password" autocomplete="new-password"><button type="button" data-eye="rcf">Show</button></div>
+        <div id="rmsg" class="msg"></div>
+        <div class="sub"><button class="btn block" id="rgo" type="submit">Create account</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="home" class="hide">
+    <div class="card center">
+      <div class="avatar" id="av"></div>
+      <h2 id="hname" style="margin:4px 0"></h2>
+      <div style="color:var(--muted)" id="huser"></div>
+      <div style="margin-top:16px;text-align:left">
+        <div class="row"><span>Email</span><span id="hmail"></span></div>
+        <div class="row"><span>Role</span><span id="hrole"></span></div>
+        <div class="row"><span>Joined</span><span id="hjoin"></span></div>
+      </div>
+      <div class="soon">You are logged in securely. Profile, posts, follow, search, chat and notifications are coming in the next phases.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function $(id){return document.getElementById(id)}
+function api(url,body){
+  var o=body!==undefined?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{};
+  return fetch(url,o).then(function(r){return r.json().catch(function(){return {}}).then(function(j){return {ok:r.ok,data:j}})});
+}
+function busy(btn,on,label){btn.disabled=on;btn.innerHTML=on?'<span class="spin"></span>Please wait':label}
+function msg(id,type,text){var e=$(id);e.className='msg '+(type||'');e.textContent=text||''}
+
+/* theme */
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  $('theme').textContent=t==='dark'?'Light':'Dark';
+  try{localStorage.setItem('theme',t)}catch(e){}
+}
+var saved=null;try{saved=localStorage.getItem('theme')}catch(e){}
+setTheme(saved||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+$('theme').onclick=function(){setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')};
+
+/* views */
+function view(v){
+  ['loading','auth','home'].forEach(function(id){$(id).classList.toggle('hide',id!==v)});
+  $('logout').classList.toggle('hide',v!=='home');
+}
+function showHome(u){
+  var name=u.full_name||u.username;
+  $('av').textContent=name.charAt(0).toUpperCase();
+  $('hname').textContent=name;
+  $('huser').textContent='@'+u.username;
+  $('hmail').textContent=u.email||'Not added';
+  $('hrole').textContent=u.role||'user';
+  $('hjoin').textContent=u.created_at?new Date(u.created_at).toLocaleDateString():'';
+  view('home');
+}
+
+/* tabs */
+function tab(reg){
+  $('tLogin').classList.toggle('on',!reg);$('tReg').classList.toggle('on',reg);
+  $('fLogin').classList.toggle('hide',reg);$('fReg').classList.toggle('hide',!reg);
+}
+$('tLogin').onclick=function(){tab(false)};
+$('tReg').onclick=function(){tab(true)};
+
+/* show/hide password */
+document.querySelectorAll('[data-eye]').forEach(function(b){
+  b.onclick=function(){
+    var i=$(b.getAttribute('data-eye'));
+    var show=i.type==='password';
+    i.type=show?'text':'password';b.textContent=show?'Hide':'Show';
+  };
+});
+
+/* username availability */
+var ut=null;
+$('ruser').oninput=function(){
+  var v=this.value.trim(),h=$('uhint');
+  clearTimeout(ut);
+  if(!v){h.className='hint';h.textContent='3-30 letters, numbers or underscore';return}
+  if(!/^[a-zA-Z0-9_]{3,30}$/.test(v)){h.className='hint bad';h.textContent='3-30 letters, numbers or underscore only';return}
+  h.className='hint';h.textContent='Checking...';
+  ut=setTimeout(function(){
+    api('/api/check-username?u='+encodeURIComponent(v)).then(function(r){
+      if($('ruser').value.trim()!==v)return;
+      if(r.data.available){h.className='hint ok';h.textContent='Username is available'}
+      else{h.className='hint bad';h.textContent='Username is not available'}
+    });
+  },400);
+};
+
+/* login */
+$('fLogin').onsubmit=function(e){
+  e.preventDefault();
+  var id=$('lid').value.trim(),pw=$('lpw').value;
+  if(!id||!pw){msg('lmsg','err','Enter email/username and password');return}
+  msg('lmsg');busy($('lgo'),true);
+  api('/api/login',{identifier:id,password:pw}).then(function(r){
+    busy($('lgo'),false,'Login');
+    if(r.ok){$('lpw').value='';showHome(r.data.user)}
+    else msg('lmsg','err',r.data.error||'Login failed');
+  }).catch(function(){busy($('lgo'),false,'Login');msg('lmsg','err','Network error, try again')});
+};
+
+/* register */
+$('fReg').onsubmit=function(e){
+  e.preventDefault();
+  var b={
+    full_name:$('rname').value.trim(),username:$('ruser').value.trim(),
+    email:$('rmail').value.trim(),phone:$('rphone').value.trim(),dob:$('rdob').value,
+    password:$('rpw').value,confirm:$('rcf').value
+  };
+  if(b.password.length<8){msg('rmsg','err','Password must be at least 8 characters');return}
+  if(b.password!==b.confirm){msg('rmsg','err','Passwords do not match');return}
+  msg('rmsg');busy($('rgo'),true);
+  api('/api/signup',b).then(function(r){
+    busy($('rgo'),false,'Create account');
+    if(r.ok){$('rpw').value='';$('rcf').value='';showHome(r.data.user)}
+    else msg('rmsg','err',r.data.error||'Could not register');
+  }).catch(function(){busy($('rgo'),false,'Create account');msg('rmsg','err','Network error, try again')});
+};
+
+/* forgot */
+$('forgot').onclick=function(){
+  api('/api/forgot',{}).then(function(r){msg('lmsg','err',r.data.error||'Not available')});
+};
+
+/* logout */
+$('logout').onclick=function(){
+  api('/api/logout',{}).then(function(){view('auth');tab(false)});
+};
+
+/* start */
+api('/api/me').then(function(r){
+  if(r.data&&r.data.user)showHome(r.data.user);else view('auth');
+}).catch(function(){view('auth')});
+</script>
+</body>
+  </html>
