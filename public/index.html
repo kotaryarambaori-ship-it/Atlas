@@ -7,22 +7,39 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Roboto,Arial,sans-serif;background:#080b14;color:#f3f4f8;min-height:100vh}
-.wrap{max-width:480px;margin:0 auto;padding:20px}
+.wrap{max-width:480px;margin:0 auto;padding:16px}
 .card{background:#111723;border:1px solid #232b3d;border-radius:24px;padding:28px;margin-top:60px}
 h1{margin:0;font-size:44px;font-weight:800}
 h1 span{color:#8b5cf6}
-.sub{color:#8b94a8;margin:8px 0 20px}
+.sub{color:#8b94a8;margin:8px 0 14px}
 h2{margin:0 0 16px}
-input,textarea{width:100%;padding:16px;margin-bottom:12px;border-radius:14px;border:1px solid #232b3d;background:#0a0e18;color:#fff;font-size:16px;font-family:inherit}
-button{width:100%;padding:16px;border:0;border-radius:14px;background:#8b5cf6;color:#fff;font-size:17px;font-weight:700;cursor:pointer}
+input,textarea{width:100%;padding:14px;margin-bottom:10px;border-radius:14px;border:1px solid #232b3d;background:#0a0e18;color:#fff;font-size:16px;font-family:inherit}
+button{width:100%;padding:14px;border:0;border-radius:14px;background:#8b5cf6;color:#fff;font-size:16px;font-weight:700;cursor:pointer}
 .link{color:#38bdf8;cursor:pointer}
 .center{text-align:center;color:#8b94a8;margin-top:16px}
 .err{color:#f87171;margin-bottom:10px;min-height:18px}
-.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .top button{width:auto;padding:8px 16px;font-size:14px;background:#232b3d}
-.post{background:#111723;border:1px solid #232b3d;border-radius:16px;padding:14px;margin-top:12px}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{background:#111723;border:1px solid #232b3d;color:#8b94a8;padding:10px}
+.tabs button.on{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.badge{background:#ef4444;color:#fff;border-radius:10px;padding:1px 7px;font-size:12px;margin-left:6px}
+.post{background:#111723;border:1px solid #232b3d;border-radius:16px;padding:14px;margin-top:12px;word-wrap:break-word}
 .post b{color:#a78bfa}
 .post small{color:#8b94a8;display:block;margin-top:6px}
+.urow{display:flex;justify-content:space-between;align-items:center;background:#111723;border:1px solid #232b3d;border-radius:14px;padding:14px;margin-top:8px;cursor:pointer}
+.urow b{color:#a78bfa}
+.chathead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.chathead button{width:auto;padding:8px 14px;background:#232b3d;font-size:14px}
+.chathead b{font-size:18px;color:#a78bfa}
+#msgs{height:52vh;overflow-y:auto;background:#0a0e18;border:1px solid #232b3d;border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.m{max-width:78%;padding:9px 12px;border-radius:16px;word-wrap:break-word;white-space:pre-wrap;font-size:15px}
+.m small{display:block;font-size:11px;opacity:.7;margin-top:3px}
+.me{align-self:flex-end;background:#8b5cf6;border-bottom-right-radius:4px}
+.them{align-self:flex-start;background:#2a3142;border-bottom-left-radius:4px}
+.sendrow{display:flex;gap:8px;margin-top:10px}
+.sendrow input{margin:0;flex:1}
+.sendrow button{width:auto;padding:0 22px}
 .hide{display:none}
 </style>
 </head>
@@ -43,20 +60,53 @@ button{width:100%;padding:16px;border:0;border-radius:14px;background:#8b5cf6;co
 <div id="app" class="hide">
   <div class="top"><h1 style="font-size:30px">ATLAS<span>.</span></h1><button id="out">Logout</button></div>
   <div id="who" class="sub"></div>
-  <textarea id="c" rows="3" placeholder="What's on your mind?"></textarea>
-  <button id="post">Post</button>
-  <div id="feed"></div>
+
+  <div class="tabs">
+    <button id="tabFeed" class="on">Feed</button>
+    <button id="tabChat">Chat<span id="tot" class="badge hide">0</span></button>
+  </div>
+
+  <div id="feedView">
+    <textarea id="c" rows="3" placeholder="What's on your mind?"></textarea>
+    <button id="post">Post</button>
+    <div id="feed"></div>
+  </div>
+
+  <div id="chatView" class="hide">
+    <div id="listView">
+      <input id="search" placeholder="Search users...">
+      <div id="ulist"></div>
+    </div>
+    <div id="convView" class="hide">
+      <div class="chathead"><button id="back">Back</button><b id="peerName"></b></div>
+      <div id="msgs"></div>
+      <div class="sendrow">
+        <input id="msgIn" placeholder="Write message..." maxlength="1000" autocomplete="off">
+        <button id="send">Send</button>
+      </div>
+      <div id="cerr" class="err"></div>
+    </div>
+  </div>
 </div>
 
 </div>
 <script>
 var mode = 'login';
+var me = null;
+var users = [];
+var peer = null;
+var lastMsgId = 0;
+var timerMsgs = null;
+var timerUsers = null;
+
 function $(id){return document.getElementById(id)}
 function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
 function api(url, body){
   var o = body ? {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)} : {};
   return fetch(url,o).then(function(r){return r.json().then(function(j){return {ok:r.ok,data:j}})});
 }
+function fmt(t){return new Date(t).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+
 function setMode(m){
   mode = m;
   $('title').textContent = m==='login' ? 'Welcome back' : 'Create your account';
@@ -65,12 +115,38 @@ function setMode(m){
   $('sw').textContent = m==='login' ? 'Create account' : 'Login';
   $('err').textContent = '';
 }
-function showAuth(){ $('auth').classList.remove('hide'); $('app').classList.add('hide'); }
+function stopTimers(){
+  clearInterval(timerMsgs); clearInterval(timerUsers);
+  timerMsgs = null; timerUsers = null;
+}
+function showAuth(){
+  stopTimers(); me = null; peer = null;
+  $('auth').classList.remove('hide'); $('app').classList.add('hide');
+}
 function showApp(user){
+  me = user;
   $('auth').classList.add('hide'); $('app').classList.remove('hide');
   $('who').textContent = 'Logged in as @' + user.username;
+  showTab('feed');
   loadPosts();
+  loadUsers();
+  clearInterval(timerUsers);
+  timerUsers = setInterval(loadUsers, 5000);
 }
+
+// ----- Tabs -----
+function showTab(t){
+  var chat = t === 'chat';
+  $('feedView').classList.toggle('hide', chat);
+  $('chatView').classList.toggle('hide', !chat);
+  $('tabFeed').classList.toggle('on', !chat);
+  $('tabChat').classList.toggle('on', chat);
+  if(chat){ closeConv(); loadUsers(); } else { stopMsgTimer(); loadPosts(); }
+}
+$('tabFeed').onclick = function(){ showTab('feed'); };
+$('tabChat').onclick = function(){ showTab('chat'); };
+
+// ----- Feed -----
 function loadPosts(){
   api('/api/posts').then(function(r){
     var posts = (r.data.posts || []);
@@ -79,6 +155,98 @@ function loadPosts(){
     }).join('') : '<div class="center">No posts yet. Be the first!</div>';
   });
 }
+$('post').onclick = function(){
+  var c = $('c').value.trim();
+  if(!c) return;
+  api('/api/posts',{content:c}).then(function(r){
+    if(r.ok){ $('c').value=''; loadPosts(); } else { alert(r.data.error || 'Error'); }
+  });
+};
+
+// ----- Users list -----
+function loadUsers(){
+  if(!me) return;
+  api('/api/users').then(function(r){
+    if(!r.ok) return;
+    users = r.data.users || [];
+    var total = 0;
+    users.forEach(function(u){ total += u.unread; });
+    $('tot').textContent = total;
+    $('tot').classList.toggle('hide', total === 0);
+    renderUsers();
+  }).catch(function(){});
+}
+function renderUsers(){
+  var q = $('search').value.trim().toLowerCase();
+  var list = users.filter(function(u){ return u.username.toLowerCase().indexOf(q) !== -1; });
+  $('ulist').innerHTML = list.length ? list.map(function(u){
+    return '<div class="urow" data-id="'+u.id+'" data-name="'+esc(u.username)+'"><b>@'+esc(u.username)+'</b>'+(u.unread?'<span class="badge">'+u.unread+'</span>':'')+'</div>';
+  }).join('') : '<div class="center">No users found</div>';
+}
+$('search').oninput = renderUsers;
+$('ulist').onclick = function(e){
+  var el = e.target;
+  while(el && el !== this && !el.getAttribute('data-id')) el = el.parentNode;
+  if(!el || el === this) return;
+  openConv({id: parseInt(el.getAttribute('data-id'),10), username: el.getAttribute('data-name')});
+};
+
+// ----- Conversation -----
+function openConv(u){
+  peer = u; lastMsgId = 0;
+  $('peerName').textContent = '@' + u.username;
+  $('msgs').innerHTML = '';
+  $('cerr').textContent = '';
+  $('listView').classList.add('hide');
+  $('convView').classList.remove('hide');
+  loadMsgs(true);
+  clearInterval(timerMsgs);
+  timerMsgs = setInterval(function(){ loadMsgs(false); }, 2500);
+  $('msgIn').focus();
+}
+function stopMsgTimer(){ clearInterval(timerMsgs); timerMsgs = null; }
+function closeConv(){
+  stopMsgTimer(); peer = null;
+  $('convView').classList.add('hide');
+  $('listView').classList.remove('hide');
+}
+$('back').onclick = function(){ closeConv(); loadUsers(); };
+
+function loadMsgs(force){
+  if(!peer) return;
+  var pid = peer.id;
+  api('/api/messages/' + pid).then(function(r){
+    if(!r.ok || !peer || peer.id !== pid) return;
+    var msgs = r.data.messages || [];
+    var newest = msgs.length ? msgs[msgs.length-1].id : 0;
+    if(!force && newest === lastMsgId) return;
+    lastMsgId = newest;
+    var box = $('msgs');
+    box.innerHTML = msgs.length ? msgs.map(function(m){
+      var mine = m.sender_id === me.id;
+      return '<div class="m '+(mine?'me':'them')+'">'+esc(m.content)+'<small>'+fmt(m.created_at)+'</small></div>';
+    }).join('') : '<div class="center">No messages yet. Say hi!</div>';
+    box.scrollTop = box.scrollHeight;
+  }).catch(function(){});
+}
+function sendMsg(){
+  if(!peer) return;
+  var t = $('msgIn').value.trim();
+  if(!t) return;
+  $('cerr').textContent = '';
+  $('send').disabled = true;
+  api('/api/messages', {receiver_id: peer.id, content: t}).then(function(r){
+    $('send').disabled = false;
+    if(r.ok){ $('msgIn').value = ''; loadMsgs(true); }
+    else { $('cerr').textContent = r.data.error || 'Could not send'; }
+  }).catch(function(){ $('send').disabled = false; $('cerr').textContent = 'Network error'; });
+}
+$('send').onclick = sendMsg;
+$('msgIn').onkeydown = function(e){
+  if(e.key === 'Enter'){ e.preventDefault(); sendMsg(); }
+};
+
+// ----- Auth -----
 $('sw').onclick = function(){ setMode(mode==='login'?'signup':'login'); };
 $('go').onclick = function(){
   var u = $('u').value.trim(), p = $('p').value;
@@ -89,16 +257,10 @@ $('go').onclick = function(){
   }).catch(function(){ $('err').textContent = 'Network error, try again'; });
 };
 $('out').onclick = function(){ api('/api/logout',{}).then(showAuth); };
-$('post').onclick = function(){
-  var c = $('c').value.trim();
-  if(!c) return;
-  api('/api/posts',{content:c}).then(function(r){
-    if(r.ok){ $('c').value=''; loadPosts(); } else { alert(r.data.error || 'Error'); }
-  });
-};
+
 api('/api/me').then(function(r){
   if(r.data.user) showApp(r.data.user); else showAuth();
 }).catch(showAuth);
 </script>
 </body>
-</html>
+    </html>
